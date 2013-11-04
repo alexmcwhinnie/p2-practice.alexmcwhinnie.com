@@ -3,7 +3,7 @@
 When setting configurations, remember that any app is also impacted by the configurations found in /core/config/config.php;
 Most of the core configs can be overwritten here on the app level.
 
-For example there's a constant in core config set for TIME_FORMAT
+For example there is a constant in core config set for TIME_FORMAT
 
 	if(!defined('TIME_FORMAT')) define('TIME_FORMAT', 'F j, Y g:ia'); 
 
@@ -31,7 +31,7 @@ A email designated to receive messages from the server. Examples:
 	define('SYSTEM_EMAIL', 'alexmcwhinnie@gmail.com'); 
 
 # Default DB name for this app
-	define('DB_NAME', "p2-practice_alexmcwhinnie_com"); 
+	define('DB_NAME', "alexmcwh_p2_alexmcwhinnie_com"); 
 
 # Timezone
 	define('TIMEZONE', 'America/New_York');
