@@ -1,13 +1,12 @@
-<h2>Login Page</h2>
+<h2>Log in</h2>
 <form method='POST' action='/users/p_login'>
-
     Email<br>
-    <input type='text' name='email'>
+    <input type='text' name='email' required>
 
     <br><br>
 
     Password<br>
-    <input type='password' name='password'>
+    <input type='password' name='password' required>
 
     <br><br>
 

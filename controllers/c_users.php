@@ -49,52 +49,50 @@ class users_controller extends base_controller {
         echo $this->template;
     }
 
-public function login($error = NULL) {
+    public function login($error = NULL) {
 
-    # Set up the view
-    $this->template->content = View::instance("v_users_login");
+        # Set up the view
+        $this->template->content = View::instance("v_users_login");
 
-    # Pass data to the view
-    $this->template->content->error = $error;
+        # Pass data to the view
+        $this->template->content->error = $error;
 
-    # Render the view
-    echo $this->template;
+        # Render the view
+        echo $this->template;
 
-}
+    }
 
 
     public function p_login() {
 
-    # Sanitize the user entered data to prevent any funny-business (re: SQL Injection Attacks)
-    $_POST = DB::instance(DB_NAME)->sanitize($_POST);
+        # Sanitize the user entered data to prevent any funny-business (re: SQL Injection Attacks)
+        $_POST = DB::instance(DB_NAME)->sanitize($_POST);
 
-    # Hash submitted password so we can compare it against one in the db
-    $_POST['password'] = sha1(PASSWORD_SALT.$_POST['password']);
+        # Hash submitted password so we can compare it against one in the db
+        $_POST['password'] = sha1(PASSWORD_SALT.$_POST['password']);
 
-    # Search the db for this email and password
-    # Retrieve the token if it's available
-    $q = "SELECT token 
-        FROM users 
-        WHERE email = '".$_POST['email']."' 
-        AND password = '".$_POST['password']."'";
+        # Search the db for this email and password
+        # Retrieve the token if it's available
+        $q = "SELECT token 
+            FROM users 
+            WHERE email = '".$_POST['email']."' 
+            AND password = '".$_POST['password']."'";
 
-    $token = DB::instance(DB_NAME)->select_field($q);
+        $token = DB::instance(DB_NAME)->select_field($q);
 
-    # If we didn't find a matching token in the database, it means login failed
-      # Login failed
-    if(!$token) {
-        # Note the addition of the parameter "error"
-        Router::redirect("/users/login/error"); 
+
+        # If we didn't find a matching token in the database, it means login failed
+          # Login failed
+        if(!$token) {
+            # Note the addition of the parameter "error"
+            Router::redirect("/users/login/error"); 
+        }
+        # Login passed
+        else {
+            setcookie("token", $token, strtotime('+2 weeks'), '/');
+            Router::redirect("/");
+        }
     }
-    # Login passed
-    else {
-        setcookie("token", $token, strtotime('+2 weeks'), '/');
-        Router::redirect("/");
-    }
-
-    
-
-}
 
 
     public function logout() {
@@ -114,39 +112,38 @@ public function login($error = NULL) {
 
         # Send them back to the main index.
         Router::redirect("/");
-
-    }
-
-
-    public function success() {
-
-    $this->userObj = new User();
-    $this->user = $this->userObj->authenticate();
-    $this->template->set_global('user', $this->user);
-
-    echo '<pre>';
-    print_r($this->user);
-    echo '</pre>';
-
-    echo "You're logged into the app, ".$this->user->first_name."!";
-    }
-        
+    } 
 
     public function profile() {
 
-    # If user is blank, they're not logged in; redirect them to the login page
-    if(!$this->user) {
-        Router::redirect('/users/login');
-    }
+        # If user is blank, they're not logged in; redirect them to the login page
+        if(!$this->user) {
+            Router::redirect('/users/login');
+        }
 
-    # If they weren't redirected away, continue:
+        # If they weren't redirected away, continue:
+        # Setup view
+        $this->template->content = View::instance('v_users_profile');
+        $this->template->title   = "Profile of ".$this->user->first_name;
+        
 
-    # Setup view
-    $this->template->content = View::instance('v_users_profile');
-    $this->template->title   = "Profile of".$this->user->first_name;
+        # The following deals with retrieving all of a user's posts
+        # Placing it in the users controller was a tough design choice. 
+        
+        # Build the query to get all the users posts
+        $q = "SELECT *
+            FROM posts
+            WHERE user_id = ".$this->user->user_id;
 
-    # Render template
-    echo $this->template;
+        # Execute the query to get all the posts. 
+        # Store the result array in the variable $posts
+        $posts = DB::instance(DB_NAME)->select_rows($q);
+
+        # Pass it to the view
+        $this->template->content->posts       = $posts;
+
+        # Render template
+        echo $this->template;
     }
 
 } # end of the class

@@ -4,38 +4,47 @@
 	<title><?php if(isset($title)) echo $title; ?></title>
 
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />	
-					
+	<link rel="stylesheet" type="text/css" href="/css/styles.css">
+				
 	<!-- Controller Specific JS/CSS -->
 	<?php if(isset($client_files_head)) echo $client_files_head; ?>
 	
 </head>
 
 <body>  
+    <div id = "wrapper"
+    <header>
+        <h1><?=APP_NAME?></h1>
+        <nav>
+            <ul>
+                <li><a href='/'>Home</a></li>
 
-    <div id='menu'>
+                <!-- Menu for users who are logged in -->
+                <?php if($user): ?>
+                    <li><a href='/posts'>View Posts</a></li>
+                    <li><a href='/posts/add'>Add a Post</a></li>
+                    <li><a href='/posts/users'>Following</a></li>
+                    <li><a href='/users/profile'>Profile</a></li>
+                    <li><a href='/users/logout'>Logout</a></li>
 
-        <a href='/'>Home</a>
+                <!-- Menu options for users who are not logged in -->
+                <?php else: ?>
 
-        <!-- Menu for users who are logged in -->
-        <?php if($user): ?>
+                    <li><a href='/users/signup'>Sign up</a></li>
+                    <li><a href='/users/login'>Log in</a></li>
 
-            <a href='/users/logout'>Logout</a>
-            <a href='/users/profile'>Profile</a>
-
-        <!-- Menu options for users who are not logged in -->
-        <?php else: ?>
-
-            <a href='/users/signup'>Sign up</a>
-            <a href='/users/login'>Log in</a>
-
-        <?php endif; ?>
-
+                <?php endif; ?>
+                <hr>
+            </ul>
+        </nav>
+    </header>
+    <div id = "content">
+        <!-- Load in content -->
+        <?php if(isset($content)) echo $content; ?>
     </div>
-
-    <br>
-    <!-- I think this is where the views appear -->
-    <?php if(isset($content)) echo $content; ?>
-
+    <footer>
+    </footer>
+    </div>
 </body>
 
 </body>
